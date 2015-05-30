@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="demoApp">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style>
+    body{
+        width: 600px;
+        margin: 0 auto;
+    }
+    table {
+        width: 50%;
+    }
+    table, td, th {
+        border: 1px solid #ccc;
+        border-collapse: collapse;
+    }
+    table tr th:hover {
+        cursor: pointer;
+        color: #3cf;
+    }
+    </style>
+</head>
+<body ng-controller="FruitsController">
+    <h1>angular demo</h1>
+    <div>{{filterField}}</div>
+    <div><input type="text" placeholder="Enter name" ng-model="filterField.name"></div>
+    <div><input type="text" placeholder="Enter price" ng-model="filterField.price"></div>
+    <button ng-click="show()">toggle visibility</button>
+    <div>
+        <table ng-show="visible">
+            <thead>
+                <tr>
+                    <th ng-click="sortField='id'">id</th>
+                    <th ng-click="sortField='name'">name</th>
+                    <th ng-click="sortField='price'">price</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="fruit in fruits | filter:filterField | orderBy:sortField">
+                    <td>{{fruit.id}}</td>
+                    <td>{{fruit.name}}</td>
+                    <td>{{fruit.price}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <script src="js/angular.min.js"></script>
+    <script>
+    var demoApp = angular.module('demoApp', []);
+
+    demoApp.factory('DataService', DataService);
+
+    function DataService($http){
+        return {
+            getData: function() {
+                return $http.get('/fruits')
+                        .then(function(response){
+                            return response.data;
+                        });
+            }
+            // getData: function() {
+            //     return [
+            //         { id: 1, name: 'grapes', price: 2.34 },
+            //         { id: 2, name: 'ananas', price: 1.34 },
+            //         { id: 3, name: 'pears', price: 6.34 },
+            //         { id: 4, name: 'oranges', price: 3.34 },
+            //         { id: 5, name: 'apples', price: 7.34 }
+            //     ];
+            // }
+        }
+    }
+
+    demoApp.controller('FruitsController', FruitsController)
+
+    function FruitsController($scope, DataService){
+        DataService
+            .getData()
+            .then(function(data){
+                $scope.fruits = data;
+            });
+
+        $scope.visible = true;
+
+        $scope.show = function(){
+            $scope.visible = !$scope.visible;
+        }
+    };
+    </script>
+</body>
+</html>
+
+<!-- 
+ng-app
+ng-init
+ng-repeat
+ng-controller
+ng-show
+ng-click
+dependency injection
+2-way binding ng-model
+1-way binding {{field}} -->
